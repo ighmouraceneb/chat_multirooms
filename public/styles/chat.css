@@ -1,0 +1,28 @@
+.chatColumn, .chatLine, .avatarLeft {
+    padding-left: 0;
+}
+
+.chat {
+    height: 346px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.chatMenu, .avatar, .chatLineLeft {
+    padding-right: 0;
+}
+
+.chatLine .well {
+    margin-top: 10px;
+    margin-right: 113px;
+}
+
+.chatLineLeft .well {
+    margin-top: 10px;
+    margin-left: 113px;
+}
+
+.chat-interface {
+    margin-top: 50px;
+}
+

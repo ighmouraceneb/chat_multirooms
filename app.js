@@ -4,12 +4,19 @@ import express from 'express';
 import path from 'path';
 import http from 'http';
 import socket from 'socket.io';
+import serveStatic from 'serve-static';
 
 
 const app = express();
 const port = 5555;
 const server = http.createServer(app);
 const io = socket.listen(server);
+
+// serving static files (style,image...)
+//app.use(serveStatic('public'));
+app.use(express.static(__dirname+'/public'));
+
+
 
 // assign the swig engine to .html files
 app.engine('html',cons.swig);
