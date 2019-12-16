@@ -1,0 +1,38 @@
+{
+  "name": "chatter",
+  "version": "1.0.0",
+  "description": "chat application with multiple rooms",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon ./app.js --exec babel-node -e js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ighmouraceneb/chat_multirooms.git"
+  },
+  "keywords": [
+    "chat",
+    "real",
+    "time",
+    "node.js",
+    "socket.io",
+    "multiplr",
+    "rooms"
+  ],
+  "author": "Bilal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ighmouraceneb/chat_multirooms/issues"
+  },
+  "homepage": "https://github.com/ighmouraceneb/chat_multirooms#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1"
+  }
+}
