@@ -58,7 +58,8 @@
 
 	<script>
 
-        const socket = io();
+		const room = 'javascript';
+        const socket = io('/tech');
 
         let sendBtn = document.querySelector('.sendBtn');
         let input = document.querySelector('.msg-text');
@@ -92,8 +93,7 @@
         	e.preventDefault()
         	let newMsg = input.value;
         	if(newMsg != "") {
-        		socket.emit("message:add", newMsg);
-        		msgList.appendChild(newMessageAppend(newMsg));
+        		socket.emit("message", newMsg);
         	}
         	input.value = "";
         });
@@ -110,17 +110,16 @@
 
         });
 
+        /******************************************************/
         socket.on('connect', () => {
-        	socket.emit('message', 'user connected');
-        });
+       		// emiting to everybody
+       		socket.emit('message', 'user connected');
+      	});
 
-        socket.on('message', (msg) => {
-        	msgList.appendChild(newMessageAppend(msg));
-        })
-
-        socket.on('messages:get', (message) => {
-        	msgList.appendChild(newMessageAppend(message));
-        })
+      	socket.on('message', (msg) => {
+      		console.log(msg)
+       		msgList.appendChild(newMessageAppend(msg));
+      	});
 
 	</script>
 
