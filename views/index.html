@@ -40,9 +40,9 @@
                     </div>
                     <form class="form-inline row">
                     	<div class="input-group mb-3 col-lg-12 ">
-                    	  <input type="text" class="form-control rounded-0" placeholder="Saisir votre message" aria-label="Saisir votre message" aria-describedby="button-addon2" id="msg" autocomplete="off">
+                    	  <input type="text" class="form-control rounded-0 msg-text" placeholder="Saisir votre message" aria-label="Saisir votre message" aria-describedby="button-addon2" id="msg" autocomplete="off">
                     	  <div class="input-group-append">
-                    	    <button class="btn btn-outline-secondary rounded-0" type="submit" id="button-addon2">Envoyer</button>
+                    	    <button class="btn btn-outline-secondary rounded-0 sendBtn" type="submit" id="button-addon2">Envoyer</button>
                     	  </div>
                     	</div>
                     </form>
@@ -58,7 +58,69 @@
 
 	<script>
 
-        const socket = io.connect('http://localhost:5555');
+        const socket = io();
+
+        let sendBtn = document.querySelector('.sendBtn');
+        let input = document.querySelector('.msg-text');
+        let msgList = document.querySelector('#messages');
+
+        function newMessageAppend(msg) {
+        	const card = document.createElement('div');
+        	const card_body = document.createElement('div');
+        	const card_text = document.createElement('p');
+
+        	const classe_card = document.createAttribute('class');
+        	classe_card.value = 'card bg-light m-3';
+        	card.setAttributeNode(classe_card );
+
+        	const class_body = document.createAttribute('class');
+        	class_body.value = 'card-body';
+        	card_body.setAttributeNode(class_body );
+
+        	const class_text = document.createAttribute('class');
+        	class_text.value = 'card-text';
+        	card_text.setAttributeNode(class_text );
+        	card_text.innerHTML = msg;
+
+        	card_body.appendChild(card_text);
+        	card.appendChild(card_body);
+        	return card;
+
+        }
+
+        sendBtn.addEventListener('click', (e) => {
+        	e.preventDefault()
+        	let newMsg = input.value;
+        	if(newMsg != "") {
+        		socket.emit("message:add", newMsg);
+        		msgList.appendChild(newMessageAppend(newMsg));
+        	}
+        	input.value = "";
+        });
+
+        socket.on('message:init', (messages) => {
+        	const nbrMsg = messages.length;
+        	let i = 0;
+        	if(nbrMsg > 0) {
+	        	while(i < nbrMsg) {
+	        		msgList.appendChild(newMessageAppend(messages[i]));
+	        		i++;
+	        	}
+        	}
+
+        });
+
+        socket.on('connect', () => {
+        	socket.emit('message', 'user connected');
+        });
+
+        socket.on('message', (msg) => {
+        	msgList.appendChild(newMessageAppend(msg));
+        })
+
+        socket.on('messages:get', (message) => {
+        	msgList.appendChild(newMessageAppend(message));
+        })
 
 	</script>
 

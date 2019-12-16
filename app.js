@@ -11,6 +11,7 @@ const app = express();
 const port = 5555;
 const server = http.createServer(app);
 const io = socket.listen(server);
+let messages = [];
 
 // serving static files (style,image...)
 //app.use(serveStatic('public'));
@@ -34,6 +35,26 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
 
 	console.log('socket connected');
+
+	// emit old msg
+	socket.emit('message:init', messages);
+
+	//emit un message where user is disconnected
+	socket.on('disconnect', () => {
+		console.log('user disconnected');
+		io.emit('message', 'user disconnected');
+	});
+
+	//get new message end emit it 
+	socket.on('message:add',(newMsg) => {
+		messages.push(newMsg);	
+		socket.broadcast.emit("messages:get",newMsg );
+	})
+	
+	//emit un message where user is connected
+	socket.on('message', (msg) => {
+		io.emit('message', msg);
+	})
 
 });
 
