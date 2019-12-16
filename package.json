@@ -27,8 +27,12 @@
   },
   "homepage": "https://github.com/ighmouraceneb/chat_multirooms#readme",
   "dependencies": {
+    "consolidate": "^0.15.1",
+    "ejs": "^3.0.1",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0"
+    "path": "^0.12.7",
+    "socket.io": "^2.3.0",
+    "swig": "^1.4.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
