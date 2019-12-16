@@ -31,32 +31,27 @@ app.get('/', (req, res) => {
 	res.render('index.html');
 });
 
+// tech namespace
+const tech = io.of('/tech');
 
-io.on('connection', (socket) => {
+tech.on('connection', (socket) => {
 
-	console.log('socket connected');
+    console.log('user connected');
 
-	// emit old msg
-	socket.emit('message:init', messages);
+    socket.emit('message:init', messages);
 
-	//emit un message where user is disconnected
-	socket.on('disconnect', () => {
-		console.log('user disconnected');
-		io.emit('message', 'user disconnected');
-	});
+    socket.on('message', (msg) => {
+        console.log(`message: ${msg}`);
+        messages.push(msg);
+        tech.emit('message', msg);
+    });
 
-	//get new message end emit it 
-	socket.on('message:add',(newMsg) => {
-		messages.push(newMsg);	
-		socket.broadcast.emit("messages:get",newMsg );
-	})
-	
-	//emit un message where user is connected
-	socket.on('message', (msg) => {
-		io.emit('message', msg);
-	})
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
 
-});
+        tech.emit('message', 'user disconnected');
+    })
+})
 
 //start sever
 server.listen(port, () => {
