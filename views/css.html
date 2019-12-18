@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block title %} {{rm}} room{% endblock %}
+
+{% block head %}
+  {% parent %}
+{% endblock %}
+
+{% block content %}
+	{% include './components/content.html' %}
+{% endblock %}
