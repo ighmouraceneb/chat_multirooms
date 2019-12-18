@@ -1,0 +1,81 @@
+<div class="col-lg-8 col-xs-8 chatColumn">
+    <div class="chat table-bordered">
+        <div class="chatContent" id="messages">
+        	{% for message in messages -%}
+        		{% if message.room == rm -%}
+            		
+            		<div class="card bg-light m-3">
+            		  <div class="card-body">
+            		    <p class="card-text"> {{ message.message }}</p>
+            		  </div>
+            		</div>                        	
+           
+        		{%- endif %}
+        	{%- endfor %}
+        </div>
+    </div>
+
+    <form class="form-inline row">
+    	<div class="input-group mb-3 col-lg-12 ">
+    	  <input type="text" class="form-control rounded-0 msg-text" placeholder="Saisir votre message" aria-label="Saisir votre message" aria-describedby="button-addon2" id="msg" autocomplete="off">
+    	  <div class="input-group-append">
+    	    <button class="btn btn-outline-secondary rounded-0 sendBtn" type="submit" id="button-addon2">Envoyer</button>
+    	  </div>
+    	</div>
+    </form>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+	const socket = io('/tech');
+	let room = document.querySelector('.active a').innerHTML.toLowerCase();
+	console.log(room)
+	let sendBtn = document.querySelector('.sendBtn');
+	let input = document.querySelector('.msg-text');
+	let msgList = document.querySelector('#messages');
+    function newMessageAppend(msg) {
+
+    	const card = document.createElement('div');
+    	const card_body = document.createElement('div');
+    	const card_text = document.createElement('p');
+
+
+    	const classe_card = document.createAttribute('class');
+    	classe_card.value = 'card bg-light m-3';
+    	card.setAttributeNode(classe_card );
+
+    	const class_body = document.createAttribute('class');
+    	class_body.value = 'card-body';
+    	card_body.setAttributeNode(class_body );
+
+    	const class_text = document.createAttribute('class');
+    	class_text.value = 'card-text';
+    	card_text.setAttributeNode(class_text );
+    	card_text.innerHTML = msg;
+
+    	card_body.appendChild(card_text);
+    	card.appendChild(card_body);
+    	return card;
+
+    }
+
+    sendBtn.addEventListener('click', (e) => {
+    	e.preventDefault()
+    	let newMsg = input.value;
+    	if(newMsg != "") {
+    		socket.emit("message", {newMsg, room});
+    	}
+    	input.value = "";
+    });
+
+
+	/******************************************************************/
+    socket.on('connect', () => {
+   		// emiting to everybody
+   		socket.emit('join', { room: room });
+  	});
+
+  	socket.on('message', (msg) => {
+   		msgList.appendChild(newMessageAppend(msg));
+  	});
+</script>

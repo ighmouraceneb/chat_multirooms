@@ -1,52 +1,35 @@
 <!DOCTYPE html>
 <html lang="fr-FR">
 <head>
-	<title> real-time Chatter </title>
+	 <title>{% block title %}Real-time Chatter{% endblock %}</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	{% block head %}
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" href="/styles/chat.css">
+	 {% endblock %}
 </head>
 <body>
-
    <div class="container">
             <div class="row chat-interface">
                 <div class="col-lg-4 col-xs-4 ">
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="#">CSS</a></li>
-                        <li class="list-group-item"><a href="#">HTML</a></li>
-                        <li class="list-group-item active "><a href="#" class="text-white">Front-end</a></li>
-                        <li class="list-group-item"><a href="#">Back-end</a></li>
-                        <li class="list-group-item"><a href="#">PHP</a></li>
-                        <li class="list-group-item"><a href="#">Node.js</a></li>
-                        <li class="list-group-item"><a href="#">Divers</a></li>
+                        <li class="list-group-item {%  if rm =='home' %}active{% endif %}">
+                        	<a href="/" class="{%  if rm =='home' %}text-white{% endif %}" >Accueil</a>
+                        </li>
+                        <li class="list-group-item {%  if rm =='css' %}active{% endif %}">
+                        	<a href="/css" class="{%  if rm =='css' %}text-white{% endif %}" >CSS</a>
+                        </li>
+                        <li class="list-group-item {%  if rm =='html' %}active{% endif %}">
+                        	<a href="/html" class="{%  if rm =='html' %}text-white{% endif %}" >HTML</a>
+                        </li>
+                        <li class="list-group-item {%  if rm =='javascript' %}active{% endif %}">
+                        	<a href="javascript" class="{%  if rm =='javascript' %}text-white{% endif %}">Javascript</a>
+                        </li>
                     </ul>
-
-               </div>
-                <div class="col-lg-8 col-xs-8 chatColumn">
-                    <div class="chat table-bordered">
-                        <div class="chatContent" id="messages">
-                        	<div class="card bg-light m-3">
-                        	  <div class="card-body">
-                        	    <p class="card-text">Salut, Comment arrondir une image en css ?</p>
-                        	  </div>
-                        	</div>
-                        	<div class="card bg-light m-3">
-                        	  <div class="card-body">
-                        	    <p class="card-text"> tu peut utiliser border-radius, ou avec bootstrap tu définit la classe rounded dans ton image</p>
-                        	  </div>
-                        	</div>
-                        </div>
-                    </div>
-                    <form class="form-inline row">
-                    	<div class="input-group mb-3 col-lg-12 ">
-                    	  <input type="text" class="form-control rounded-0 msg-text" placeholder="Saisir votre message" aria-label="Saisir votre message" aria-describedby="button-addon2" id="msg" autocomplete="off">
-                    	  <div class="input-group-append">
-                    	    <button class="btn btn-outline-secondary rounded-0 sendBtn" type="submit" id="button-addon2">Envoyer</button>
-                    	  </div>
-                    	</div>
-                    </form>
                 </div>
+                {% block content %}{% endblock %}
+
             </div>
         </div>
 
@@ -54,72 +37,34 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
-	   <script src="/socket.io/socket.io.js"></script>
 
 	<script>
 
-		const room = 'javascript';
-        const socket = io('/tech');
+		
+        
 
-        let sendBtn = document.querySelector('.sendBtn');
-        let input = document.querySelector('.msg-text');
-        let msgList = document.querySelector('#messages');
-
-        function newMessageAppend(msg) {
-        	const card = document.createElement('div');
-        	const card_body = document.createElement('div');
-        	const card_text = document.createElement('p');
-
-        	const classe_card = document.createAttribute('class');
-        	classe_card.value = 'card bg-light m-3';
-        	card.setAttributeNode(classe_card );
-
-        	const class_body = document.createAttribute('class');
-        	class_body.value = 'card-body';
-        	card_body.setAttributeNode(class_body );
-
-        	const class_text = document.createAttribute('class');
-        	class_text.value = 'card-text';
-        	card_text.setAttributeNode(class_text );
-        	card_text.innerHTML = msg;
-
-        	card_body.appendChild(card_text);
-        	card.appendChild(card_body);
-        	return card;
-
+        let links = document.querySelectorAll('.list-group-item a');
+        
+        function addEventLink() {
+        	
+        	for(let item of links) {
+        		item.addEventListener('click', () => {
+        			
+        			const active = document.querySelectorAll('li.active')
+        			active[0].classList.remove('active');
+        			active[0].lastChild.classList.remove('text-white');        			
+        			item.classList.toggle('text-white');
+        			item.parentNode.classList.toggle('active');
+        			room = item.innerHTML.toLowerCase();
+        			console.log(room, item );
+        			socket.emit('join', { room: room });
+        		
+        		})
+        	}
         }
 
-        sendBtn.addEventListener('click', (e) => {
-        	e.preventDefault()
-        	let newMsg = input.value;
-        	if(newMsg != "") {
-        		socket.emit("message", newMsg);
-        	}
-        	input.value = "";
-        });
+        addEventLink();
 
-        socket.on('message:init', (messages) => {
-        	const nbrMsg = messages.length;
-        	let i = 0;
-        	if(nbrMsg > 0) {
-	        	while(i < nbrMsg) {
-	        		msgList.appendChild(newMessageAppend(messages[i]));
-	        		i++;
-	        	}
-        	}
-
-        });
-
-        /******************************************************/
-        socket.on('connect', () => {
-       		// emiting to everybody
-       		socket.emit('message', 'user connected');
-      	});
-
-      	socket.on('message', (msg) => {
-      		console.log(msg)
-       		msgList.appendChild(newMessageAppend(msg));
-      	});
 
 	</script>
 
